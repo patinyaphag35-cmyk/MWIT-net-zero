@@ -1,27 +1,46 @@
-// เปลี่ยนส่วนของ event listener ใน script เดิมเป็นชุดนี้ครับ:
+<!-- คัดลอกเฉพาะส่วน script ด้านล่างนี้ไปวางทับ script เดิมทั้งหมดในไฟล์ index.html -->
+<script type="module">
+    // ... โค้ดส่วนอื่นๆ คงเดิม แต่ให้แก้ฟังก์ชันโชว์หน้าจอและปุ่มกดให้เป็นแบบนี้ ...
 
-$("#identityForm").addEventListener("submit", function(event) {
-  event.preventDefault(); // ป้องกันการรีเฟรชหน้าเว็บ
-  
-  try {
-    user.name = $("#fullName").value.trim();
-    user.studentClass = $("#studentClass").value.trim();
-    user.number = $("#studentNo").value.trim();
-    
-    if(!user.name || !user.studentClass || !user.number) {
-      showToast("กรุณากรอกข้อมูลให้ครบทุกช่อง");
-      return;
+    // เพิ่มฟังก์ชันนี้เพื่อจัดการหน้าจอให้ชัวร์
+    window.changeScreen = function(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+        const target = document.getElementById(screenId);
+        if(target) target.style.display = 'block';
     }
+
+    // แก้ไข Event Listener ของปุ่มเริ่มทำ Pre-test
+    document.getElementById('identityForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // ดึงค่า
+        const name = document.getElementById('fullName').value.trim();
+        const cls = document.getElementById('studentClass').value.trim();
+        const no = document.getElementById('studentNo').value.trim();
+        const consent = document.getElementById('privacyConsent').checked;
+
+        if(!name || !cls || !no) {
+            alert("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+            return;
+        }
+        if(!consent) {
+            alert("กรุณากดยอมรับเงื่อนไข");
+            return;
+        }
+
+        // บันทึกค่า
+        user.name = name;
+        user.studentClass = cls;
+        user.number = no;
+
+        // เปลี่ยนหน้า (ใช้ฟังก์ชันที่แก้ให้ใหม่)
+        changeScreen('quizScreen');
+    });
+
+    // ตรวจสอบว่าหน้าแรกต้องโชว์
+    document.addEventListener('DOMContentLoaded', () => {
+        changeScreen('welcomeScreen');
+    });
     
-    if(!$("#privacyConsent").checked) {
-      showToast("กรุณากดยอมรับเงื่อนไขข้อมูลส่วนบุคคล");
-      return;
-    }
-    
-    console.log("Identity confirmed:", user);
-    showScreen("quizScreen"); // เปลี่ยนจาก preScreen เป็น quizScreen (ตามชื่อ id ที่เราตั้งในโค้ด)
-  } catch (err) {
-    console.error("Error at identityForm:", err);
-    showToast("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
-  }
-});
+    // ... ส่วนที่เหลือของ script ให้คงเดิม ...
+</script>
