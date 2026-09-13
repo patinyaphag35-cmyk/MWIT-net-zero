@@ -591,7 +591,7 @@
           </span>
           MWIT Net-Zero Bangkok 3D
         </div>
-        <div class="hud-box"><small>เวลาที่เหลือ</small><strong id="timeHud">10:00</strong></div>
+        <div class="hud-box"><small>เวลาที่เหลือ</small><strong id="timeHud">5:00</strong></div>
         <div class="hud-box"><small>เงิน</small><strong id="cashHud">฿0</strong></div>
         <div class="hud-box"><small>รายได้ / 10 วินาที</small><strong id="incomeHud">฿0</strong></div>
         <div class="hud-box"><small>ดูดซับ / ปล่อย</small><strong id="carbonHud">0 / 0</strong></div>
@@ -636,7 +636,7 @@
             แผนที่และแลนด์มาร์กเป็นงานจำลอง ไม่ใช่มาตราส่วนหรือพิกัดจริง
           </div>
 
-          <div class="event-counter">⚡ เหตุการณ์ถัดไป <span id="eventHud">100</span> วิ</div>
+          <div class="event-counter">⚡ เหตุการณ์ถัดไป <span id="eventHud">50</span> วิ</div>
         </section>
       </div>
     </main>
@@ -672,8 +672,8 @@
     const SCHOOL_LOGO = "logo.png";
 
     const CONFIG = {
-      GAME_SECONDS: 600,
-      EVENT_INTERVAL: 100,
+      GAME_SECONDS: 300,
+      EVENT_INTERVAL: 50,
       INCOME_INTERVAL: 10,
       STARTING_CASH: 1200,
       ELECTRICITY_EF: 0.475,
@@ -1758,12 +1758,12 @@
       openModal(`
         <h2>🌱 วิธีเล่น</h2>
         <div class="notice">
-          <strong>เป้าหมาย:</strong> สร้างเงินให้มากที่สุดภายใน 10 นาที
+          <strong>เป้าหมาย:</strong> สร้างเงินให้มากที่สุดภายใน 5 นาที
           โดยรักษา <strong>การดูดซับ − การปล่อย ≥ 0</strong> ตลอดเวลา
         </div>
         <p>• อาคารสร้างรายได้ทุก 10 วินาที แต่ปล่อยคาร์บอน</p>
         <p>• ต้นไม้ช่วยดูดซับคาร์บอน แต่ไม่สร้างรายได้</p>
-        <p>• ทุก 100 วินาทีจะมีคำถามและเหตุการณ์พิเศษ</p>
+        <p>• ทุก 50 วินาทีจะมีคำถามและเหตุการณ์พิเศษ</p>
         <p>• หากเงินหรือสมดุลคาร์บอนต่ำกว่า 0 จะ Game Over ทันที</p>
         <p>• หมุนเมืองด้วยการลากพื้นที่ว่าง ซูมด้วยล้อเมาส์หรือสองนิ้ว</p>
         <p>• แตะทรัพยากรในร้าน แล้วแตะพื้นที่บนเมืองเพื่อสร้าง</p>
