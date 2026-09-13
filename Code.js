@@ -1,0 +1,27 @@
+// เปลี่ยนส่วนของ event listener ใน script เดิมเป็นชุดนี้ครับ:
+
+$("#identityForm").addEventListener("submit", function(event) {
+  event.preventDefault(); // ป้องกันการรีเฟรชหน้าเว็บ
+  
+  try {
+    user.name = $("#fullName").value.trim();
+    user.studentClass = $("#studentClass").value.trim();
+    user.number = $("#studentNo").value.trim();
+    
+    if(!user.name || !user.studentClass || !user.number) {
+      showToast("กรุณากรอกข้อมูลให้ครบทุกช่อง");
+      return;
+    }
+    
+    if(!$("#privacyConsent").checked) {
+      showToast("กรุณากดยอมรับเงื่อนไขข้อมูลส่วนบุคคล");
+      return;
+    }
+    
+    console.log("Identity confirmed:", user);
+    showScreen("quizScreen"); // เปลี่ยนจาก preScreen เป็น quizScreen (ตามชื่อ id ที่เราตั้งในโค้ด)
+  } catch (err) {
+    console.error("Error at identityForm:", err);
+    showToast("เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง");
+  }
+});
