@@ -220,6 +220,29 @@
       font-size:clamp(1.6rem,6vw,2.4rem);
     }
 
+    .leaderboard-panel{margin-top:22px}
+    .leaderboard-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+    .leaderboard-table{width:100%;border-collapse:collapse;font-size:.94rem}
+    .leaderboard-table th{
+      text-align:left;
+      padding:9px 10px;
+      color:var(--muted);
+      font-weight:800;
+      border-bottom:2px solid var(--line);
+      white-space:nowrap;
+    }
+    .leaderboard-table td{
+      padding:11px 10px;
+      border-bottom:1px solid var(--line);
+      font-weight:700;
+    }
+    .leaderboard-table td:first-child,.leaderboard-table th:first-child{width:48px;color:var(--muted)}
+    .leaderboard-table td:last-child,.leaderboard-table th:last-child{text-align:right;color:var(--green);font-weight:900}
+    .leaderboard-table tr.me{background:#ecfaf2}
+    .leaderboard-table tr.me td{color:var(--green)}
+    .leaderboard-table tr:first-child td{font-weight:900}
+    .leaderboard-status{padding:14px;text-align:center;color:var(--muted)}
+
     .result-mark{
       width:74px;
       height:74px;
@@ -541,19 +564,19 @@
       </div>
 
       <div class="panel">
-        <div class="notice">
+        <div class="notice warning">
           <strong>ประกาศเรื่องข้อมูลส่วนบุคคล</strong><br>
-          เว็บไซต์นี้ไม่บันทึกชื่อ ชั้น เลขที่ คะแนน หรือข้อมูลส่วนบุคคลลงฐานข้อมูล
-          และไม่มีการส่งข้อมูลออกจากอุปกรณ์ ข้อมูลอยู่ในหน่วยความจำชั่วคราว
-          และจะหายไปทั้งหมดเมื่อปิดหรือโหลดหน้าเว็บใหม่
-          คะแนนใช้ประกอบการส่งงานรายวิชา
-          <strong>ส30105 มนุษย์กับสิ่งแวดล้อม</strong> เท่านั้น
+          เมื่อคุณเล่นจบเกม ระบบจะส่ง <strong>ชื่อเล่นและคะแนนตอนจบเกม</strong> ของคุณ
+          ไปเก็บไว้ในตารางคะแนนกลาง (Google Sheet) เพื่อนำมาแสดงบน
+          <strong>ตารางคะแนนผู้เล่นทั้งหมด (Scoreboard)</strong> ให้เพื่อนร่วมชั้นเห็นเท่านั้น
+          ระบบไม่เก็บชั้นหรือเลขที่ในตารางคะแนนนี้ และไม่นำข้อมูลไปใช้เพื่อวัตถุประสงค์อื่น
+          หากไม่ต้องการให้ชื่อของคุณปรากฏบนตารางคะแนน กรุณาใส่ -
         </div>
 
         <form id="identityForm">
           <div class="field">
-            <label for="fullName">ชื่อ–นามสกุล</label>
-            <input id="fullName" maxlength="100" autocomplete="name" required placeholder="เช่น สมชาย ใจดี">
+            <label for="fullName">ชื่อเล่น</label>
+            <input id="fullName" maxlength="100" autocomplete="name" required placeholder="เช่น หนึ่งชอบทำท่าหกเจ็ด">
           </div>
 
           <div class="grid2">
@@ -569,7 +592,8 @@
 
           <label class="checkbox">
             <input id="privacyConsent" type="checkbox" required>
-            <span>ฉันรับทราบว่าระบบไม่จัดเก็บข้อมูล และจะถ่ายภาพหน้าจอผลคะแนนก่อนออกจากเว็บไซต์</span>
+            <span>ฉันยินยอมให้เก็บ<strong>ชื่อเล่นและคะแนนตอนจบเกม</strong>ของฉันไว้ในตารางคะแนนกลาง
+            เพื่อแสดงผลบนตารางคะแนนผู้เล่นทั้งหมด (Scoreboard) เท่านั้น</span>
           </label>
 
           <button class="btn primary large" type="submit" style="margin-top:18px">เริ่มทำ Pre-test</button>
@@ -715,7 +739,12 @@
       INCOME_INTERVAL: 10,
       STARTING_CASH: 1200,
       ELECTRICITY_EF: 0.475,
-      SUBMISSION_URL: "https://forms.gle/CJVGtLBdxCCU93Q97"
+      SUBMISSION_URL: "https://forms.gle/CJVGtLBdxCCU93Q97",
+      /* วางลิงก์ Google Apps Script Web App ที่ deploy แล้วตรงนี้
+         (ดูวิธีตั้งค่าในไฟล์ leaderboard-setup.md ที่แนบมาด้วย)
+         ต้องลงท้ายด้วย /exec เช่น
+         "https://script.google.com/macros/s/AKfycbxxxxxxxxxxxxxxxxxxxxxxxxxx/exec" */
+      LEADERBOARD_URL: "https://script.google.com/macros/s/AKfycbxs02WYUPjjRL_sJqq9U_Mwmld5obWvawvOE9CmpU8dCmP4lfY_EKXGMCH4mOdCwFHD/exec"
     };
 
     if(SCHOOL_LOGO!=="logo.png"){
@@ -731,18 +760,18 @@
       {q:"ประโยชน์สำคัญของเรือนยอดต้นไม้ในเมืองคือข้อใด",
        c:["เพิ่มอุณหภูมิพื้นผิว","ให้ร่มเงาและช่วยลดเกาะความร้อน","หยุดฝนไม่ให้ตก","ทำให้ความชื้นเป็นศูนย์"],
        a:1,hard:false,e:"ร่มเงาและการคายน้ำของพืชช่วยลดอุณหภูมิพื้นผิวและบรรเทาเกาะความร้อน"},
-      {q:"ต้นไม้ลดคาร์บอนไดออกไซด์ผ่านกระบวนการใดเป็นหลัก",
-       c:["การสังเคราะห์ด้วยแสง","การคายน้ำ","การย่อยสลาย","การดูดแร่ธาตุ"],
-       a:0,hard:false,e:"พืชใช้คาร์บอนไดออกไซด์ในการสังเคราะห์ด้วยแสงและเก็บคาร์บอนไว้ในชีวมวล"},
+      {q:"เหตุใดเมืองที่มีเงินคงเหลือมากตอนจบเกม แต่สมดุลคาร์บอนติดลบ จึงไม่ถือว่าประสบความสำเร็จตามเป้าหมายของเกมนี้",
+       c:["เพราะเป้าหมายหลักคือสมดุลคาร์บอน ไม่ใช่ผลกำไรเพียงอย่างเดียว","เพราะเงินคงเหลือไม่มีผลต่อคะแนนเกมเลย","เพราะสมดุลคาร์บอนติดลบทำให้เงินหายไปทั้งหมด","เพราะเกมไม่นับเงินคงเหลือเป็นปัจจัยใด ๆ"],
+       a:0,hard:false,e:"ความสำเร็จทางเศรษฐกิจไม่ทำให้เกิดสมดุลคาร์บอนโดยอัตโนมัติ เป้าหมายของเกมคือ Carbon Net Zero ควบคู่กับการเติบโตทางเศรษฐกิจ"},
       {q:"Carbon Net Zero หมายถึงอะไร",
        c:["ไม่มีกิจกรรมใดปล่อยคาร์บอนเลย","การปล่อยสุทธิสมดุลกับการลดหรือดูดกลับในขอบเขตที่กำหนด","ปลูกต้นไม้ชนิดเดียวจำนวนมาก","หยุดใช้ไฟฟ้าทั้งหมด"],
        a:1,hard:false,e:"Net Zero คือสมดุลสุทธิภายในขอบเขตและช่วงเวลาที่กำหนด"},
       {q:"เหตุใดการรักษาต้นไม้ใหญ่เดิมจึงสำคัญ",
        c:["ต้นไม้ใหญ่ไม่ต้องการน้ำ","มีชีวมวลและเรือนยอดมาก จึงให้บริการระบบนิเวศได้มากในระยะสั้น","กล้าไม้ไม่สังเคราะห์ด้วยแสง","ต้นไม้ใหญ่ไม่มีวันตาย"],
        a:1,hard:true,e:"ต้นไม้ใหญ่มีเรือนยอดและคาร์บอนสะสมมาก กล้าไม้ต้องใช้เวลาหลายปีจึงให้ประโยชน์ใกล้เคียงกัน"},
-      {q:"พื้นที่สีเขียวช่วยจัดการน้ำฝนได้อย่างไร",
-       c:["เพิ่มพื้นผิวทึบน้ำ","ช่วยหน่วง ซึม และกรองน้ำฝน","ทำให้น้ำระเหยทันทีทั้งหมด","เปลี่ยนน้ำฝนเป็นน้ำทะเล"],
-       a:1,hard:false,e:"ดินและรากพืชช่วยชะลอน้ำไหลบ่า เพิ่มการซึม และกรองมลพิษบางส่วน"},
+      {q:"หากจำนวนอาคารในเมืองมากกว่าจำนวนต้นไม้ แปลว่าอะไร",
+       c:["โครงสร้างเมืองเน้นเศรษฐกิจมากกว่าพื้นที่สีเขียว ควรกระจายต้นไม้เพิ่ม","เมืองมีสัดส่วนต้นไม้ที่ดีอยู่แล้ว","ควรรื้ออาคารทั้งหมดทันที","ไม่มีคำแนะนำเพิ่มเติม"],
+       a:0,hard:false,e:"เมื่อจำนวนอาคารมากกว่าต้นไม้ ระบบจะแนะนำให้กระจายต้นไม้และสร้างทางเชื่อมสีเขียวเพิ่มเติม"},
       {q:"การปลูกต้นไม้หลายชนิดมีข้อดีสำคัญอย่างไร",
        c:["ทำให้โรคระบาดง่ายขึ้นเสมอ","เพิ่มความหลากหลายและลดความเสี่ยงจากโรคเฉพาะชนิด","ไม่ต้องดูแลต้นไม้","ทำให้ต้นไม้ทุกต้นรอดแน่นอน"],
        a:1,hard:false,e:"ความหลากหลายช่วยลดความเสียหายจากโรคหรือแมลงที่โจมตีต้นไม้เพียงชนิดหนึ่ง"},
@@ -1805,7 +1834,7 @@
         <p>• หากเงินหรือสมดุลคาร์บอนต่ำกว่า 0 จะ Game Over ทันที</p>
         <p>• หมุนเมืองด้วยการลากพื้นที่ว่าง ซูมด้วยล้อเมาส์หรือสองนิ้ว</p>
         <p>• แตะทรัพยากรในร้าน แล้วแตะพื้นที่บนเมืองเพื่อสร้าง</p>
-        <button id="beginGame" class="btn primary large">เริ่มจับเวลา 10 นาที</button>
+        <button id="beginGame" class="btn primary large">เริ่มจับเวลา 5 นาที</button>
       `);
 
       $("#beginGame").onclick=()=>{
@@ -2146,17 +2175,27 @@
           <div class="summary-box"><small>ทรัพย์สินเสียหาย</small><strong>${state.stats.destroyed}</strong></div>
         </div>
 
+        <div class="panel leaderboard-panel">
+          <div class="leaderboard-head">
+            <h3 style="margin:0">🏆 ตารางคะแนนผู้เล่นทั้งหมด</h3>
+            <button id="refreshLeaderboard" class="btn" type="button">🔄 รีเฟรช</button>
+          </div>
+          <div id="leaderboardBody">
+            <div class="leaderboard-status">กำลังโหลดตารางคะแนน...</div>
+          </div>
+        </div>
+
         <div class="ai-box">
           <h3>🤖 สรุปการเล่นแบบอัจฉริยะ</h3>
           <p>${escapeHTML(intelligentSummary())}</p>
           <div class="small" style="color:#d7eae2">
-            ประมวลผลภายในอุปกรณ์จากสถิติของเกม ไม่มีการส่งข้อมูลส่วนบุคคลออกภายนอก
+            ประมวลผลภายในอุปกรณ์จากสถิติของเกม มีเพียงชื่อและคะแนนตอนจบเกมเท่านั้นที่ถูกส่งไปแสดงบนตารางคะแนนกลาง
           </div>
         </div>
 
         <div class="notice warning" style="margin-top:19px">
           <strong>กรุณาถ่ายภาพหน้าจอสถิตินี้เก็บไว้</strong><br>
-          ข้อมูลจะหายไปเมื่อปิดหรือรีเฟรชหน้าเว็บ
+          สถิติละเอียดของเกมนี้จะหายไปเมื่อปิดหรือรีเฟรชหน้าเว็บ (มีเพียงชื่อและคะแนนตอนจบเกมที่ถูกบันทึกไว้ในตารางคะแนนกลาง)
         </div>
 
         <div class="actions">
@@ -2168,6 +2207,85 @@
       showScreen("gameResultScreen");
       $("#printGameResult").onclick=()=>window.print();
       $("#openPostTest").onclick=()=>openQuiz("post");
+
+      loadAndShowLeaderboard(true,score);
+      $("#refreshLeaderboard").onclick=()=>loadAndShowLeaderboard(false,result.gameScore);
+    }
+
+    function isLeaderboardConfigured(){
+      return !!CONFIG.LEADERBOARD_URL && !CONFIG.LEADERBOARD_URL.includes("PASTE_YOUR");
+    }
+
+    async function submitScoreToLeaderboard(name,score){
+      if(!isLeaderboardConfigured())return;
+      try{
+        await fetch(CONFIG.LEADERBOARD_URL,{
+          method:"POST",
+          headers:{"Content-Type":"text/plain;charset=utf-8"},
+          body:JSON.stringify({name,score})
+        });
+      }catch(err){
+        console.warn("ส่งคะแนนขึ้นตารางคะแนนไม่สำเร็จ",err);
+      }
+    }
+
+    async function fetchLeaderboard(){
+      if(!isLeaderboardConfigured())return null;
+      try{
+        const res=await fetch(CONFIG.LEADERBOARD_URL,{method:"GET",cache:"no-store"});
+        const data=await res.json();
+        return Array.isArray(data)?data:[];
+      }catch(err){
+        console.warn("โหลดตารางคะแนนไม่สำเร็จ",err);
+        return null;
+      }
+    }
+
+    function renderLeaderboardRows(list,myScore){
+      const sorted=[...list].sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0));
+      if(!sorted.length){
+        return `<div class="leaderboard-status">ยังไม่มีผู้เล่นในตารางคะแนน</div>`;
+      }
+      const rows=sorted.map((row,i)=>{
+        const isMe=row.name===user.name&&Number(row.score)===myScore;
+        return `
+          <tr class="${isMe?"me":""}">
+            <td>${i+1}</td>
+            <td>${escapeHTML(String(row.name||"-"))}</td>
+            <td>${(Number(row.score)||0).toLocaleString("th-TH")}</td>
+          </tr>`;
+      }).join("");
+      return `
+        <table class="leaderboard-table">
+          <thead><tr><th>อันดับ</th><th>ชื่อ</th><th>คะแนน</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    async function loadAndShowLeaderboard(submitFirst,myScore){
+      const body=$("#leaderboardBody");
+      if(!body)return;
+
+      if(!isLeaderboardConfigured()){
+        body.innerHTML=`<div class="leaderboard-status">
+          ยังไม่ได้ตั้งค่าตารางคะแนนกลาง (CONFIG.LEADERBOARD_URL)<br>
+          ระบบจะแสดงเฉพาะคะแนนของคุณเท่านั้น
+        </div>`;
+        return;
+      }
+
+      body.innerHTML=`<div class="leaderboard-status">กำลังโหลดตารางคะแนน...</div>`;
+
+      if(submitFirst){
+        await submitScoreToLeaderboard(user.name,myScore);
+      }
+
+      const list=await fetchLeaderboard();
+      if(list===null){
+        body.innerHTML=`<div class="leaderboard-status">โหลดตารางคะแนนไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตแล้วกดรีเฟรช</div>`;
+        return;
+      }
+      body.innerHTML=renderLeaderboardRows(list,myScore);
     }
 
     function renderFinalResult(){
