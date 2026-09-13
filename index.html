@@ -2242,25 +2242,50 @@
     }
 
     function renderLeaderboardRows(list,myScore){
-      const sorted=[...list].sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0));
-      if(!sorted.length){
-        return `<div class="leaderboard-status">ยังไม่มีผู้เล่นในตารางคะแนน</div>`;
-      }
-      const rows=sorted.map((row,i)=>{
-        const isMe=row.name===user.name&&Number(row.score)===myScore;
-        return `
-          <tr class="${isMe?"me":""}">
-            <td>${i+1}</td>
-            <td>${escapeHTML(String(row.name||"-"))}</td>
-            <td>${(Number(row.score)||0).toLocaleString("th-TH")}</td>
-          </tr>`;
-      }).join("");
-      return `
-        <table class="leaderboard-table">
-          <thead><tr><th>อันดับ</th><th>ชื่อ</th><th>คะแนน</th></tr></thead>
-          <tbody>${rows}</tbody>
-        </table>`;
-    }
+  const sorted=[...list].sort((a,b)=>(Number(b.score)||0)-(Number(a.score)||0));
+  if(!sorted.length){
+    return `<div class="leaderboard-status">ยังไม่มีผู้เล่นในตารางคะแนน</div>`;
+  }
+
+  const TOP_LIMIT=50;
+  const ranked=sorted.map((row,i)=>({...row,rank:i+1}));
+  const top=ranked.slice(0,TOP_LIMIT);
+  const myRow=ranked.find(row=>row.name===user.name&&Number(row.score)===myScore);
+  const myInTop=Boolean(myRow)&&myRow.rank<=TOP_LIMIT;
+
+  const rowHtml=row=>{
+    const isMe=Boolean(myRow)&&row.rank===myRow.rank;
+    return `
+      <tr class="${isMe?"me":""}">
+        <td>${row.rank}</td>
+        <td>${escapeHTML(String(row.name||"-"))}</td>
+        <td>${(Number(row.score)||0).toLocaleString("th-TH")}</td>
+      </tr>`;
+  };
+
+  let rows=top.map(rowHtml).join("");
+
+  if(myRow&&!myInTop){
+    rows+=`
+      <tr><td colspan="3" style="text-align:center;color:var(--muted)">⋯</td></tr>
+      ${rowHtml(myRow)}
+    `;
+  }
+
+  const note=sorted.length>TOP_LIMIT
+    ?`<div class="small" style="margin-top:8px;text-align:center">
+        แสดง ${TOP_LIMIT} อันดับแรกจากทั้งหมด ${sorted.length} ครั้งที่เล่น
+      </div>`
+    :"";
+
+  return `
+    <table class="leaderboard-table">
+      <thead><tr><th>อันดับ</th><th>ชื่อ</th><th>คะแนน</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    ${note}`;
+}
+
 
     async function loadAndShowLeaderboard(submitFirst,myScore){
       const body=$("#leaderboardBody");
